@@ -32,6 +32,9 @@ class FieldElement(object):
         if other is None:
             return False
         
+        elif other.prime is None:
+            return (self.num - other) % self.prime
+
         elif self.prime != other.prime:
             return False
 
@@ -110,7 +113,7 @@ class Point(object):
         self.y = y
         if self.x is None and self.y is None:
             return
-        if self.y**2 != self.x**3 + self.x*self.a + self.b :
+        if self.y**2 != self.x**3 + self.a*self.x + self.b :
             raise ValueError("Le point ({},{}) n'est pas sur la courbe".format(self.x,self.y))
     
     def __repr__(self):
@@ -132,16 +135,16 @@ class Point(object):
             return False
         else:
             if self == other:
-                S = (3*self.x + a)*(2*self.y.mod_inverse())
+                S = (3*self.x + self.a)*(FieldElement(2*self.y,y.prime).mod_inverse())
                 #S = ((3*self.x + a)*mod_inverse(2*self.y))
                 X = (S**2 - 2*self.x)
                 Y = (S*(self.x-X)-self.y)
                 C = Point(X,Y,self.a,self.b)
                 return C
             else:
-                S = (other.y-self.y)*((other.x-self.x).mod_inverse())
+                S = (other.y-self.y)*(FieldElement(other.x-self.x,x.prime).mod_inverse())
                 #S =((p2.y-self.y)*mod_inverse(other.x-self.x))
-                X = (S**2-self.x-other.x)
+                X = (S**2-(self.x-other.x))
                 Y = (S*(self.x-X)-self.y)
                 C = Point(X,Y,self.a,self.b)
                 return C  
