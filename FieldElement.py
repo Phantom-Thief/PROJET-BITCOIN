@@ -15,6 +15,79 @@ class FieldElement(object):
             return self.num == other.num and self.prime == other.prime
 
 
+    #def __ne__(self,other): 
+        
+
+    def __add__(self,other):
+        if other is None:
+            return False
+        
+        elif self.prime != other.prime:
+            return False
+    
+        else:
+            return (self.num + other.num) % self.prime 
+
+    def __sub__(self,other):  
+        if other is None:
+            return False
+        
+        elif self.prime != other.prime:
+            return False
+
+        else:
+            return (self.num - other.num) % self.prime 
+    
+    def __neg__(self):
+        return (-self.num) % self.prime
+
+    def __mul__(self,other): 
+        if other is None:
+            return False
+        
+        elif self.prime != other.prime:
+            return False
+    
+        else:
+            return (self.num * other.num) % self.prime 
+
+    def __pow__(self,val):
+        if val is None:
+            return False
+        else :
+            return (self.num ** val) % self.prime 
+        
+    def __truediv__(self,other):
+        if other is None:
+            return False
+             
+        elif self.prime != other.prime:
+            return False
+
+        else:
+            return (self.num / other.num) % self.prime
+
+    def __floordiv__(self,other):
+        if other is None:
+            return False
+             
+        elif self.prime != other.prime:
+            return False
+
+        else:
+            return (self.num // other.num) % self.prime
+
+    def __rmul__(self,val):
+        if val is None:
+            return False
+
+        else:
+            return (self.num * val) % self.prime
+        
+
+
+
+ 
 
 class Point(object):
     def __init__(self,x,y,a,b):
@@ -38,3 +111,10 @@ class Point(object):
             return False
         else:
             return self.x == other.x and self.y == self.y
+
+
+a = FieldElement(5,7)
+b = FieldElement(2,7)
+c = FieldElement(5,11)
+
+print(a//b)
