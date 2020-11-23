@@ -84,7 +84,20 @@ class FieldElement(object):
         else:
             return (self.num * val) % self.prime
         
+    def mod_inverse(self):
 
+        b = self.prime
+        if abs(b) == 0:
+            return (1, 0, self.num)
+
+        x1, x2, y1, y2 = 0, 1, 1, 0
+        while abs(b) > 0:
+            q, r = divmod(self.num, b)
+            x = x2 - q * x1
+            y = y2 - q * y1
+            self.num, b, x2, x1, y2, y1 = b, r, x1, x, y1, y
+
+        return x2 % self.prime
 
 
  
@@ -112,9 +125,40 @@ class Point(object):
         else:
             return self.x == other.x and self.y == self.y
 
+    #def __ne__(self,):
+ 
+    def __add__(self,other):
+        if other is None:
+            return False
+        else:
+            if self == other:
+                S = (3*self.x + a)*(2*self.y.mod_inverse())
+                #S = ((3*self.x + a)*mod_inverse(2*self.y))
+                X = (S**2 - 2*self.x)
+                Y = (S*(self.x-X)-self.y)
+                C = Point(X,Y,self.a,self.b)
+                return C
+            else:
+                S = (other.y-self.y)*((other.x-self.x).mod_inverse())
+                #S =((p2.y-self.y)*mod_inverse(other.x-self.x))
+                X = (S**2-self.x-other.x)
+                Y = (S*(self.x-X)-self.y)
+                C = Point(X,Y,self.a,self.b)
+                return C  
 
-a = FieldElement(5,7)
-b = FieldElement(2,7)
-c = FieldElement(5,11)
+    #def __rmul__
 
-print(a//b)
+
+
+
+x = FieldElement(0,5)
+y = FieldElement(1,5)
+
+p=Point(x,y,2,1)
+
+x2 = FieldElement(1,5)
+y2 = FieldElement(3,5)
+
+p2=Point(x2,y2,2,1)
+
+print(p2+p)
