@@ -1,2 +1,2 @@
 # PROJET-BITCOIN
-BRANCHE PRINCIPAL, SI VOUS VOULEZ FAIRE DES GROSSES MODIFS DE CODE, CREEZ UNE BRANCHE SECONDAIRE PUIS FAITES UN MERGE SVP CE SERA PLUS SIMPLE POUR TOUS LE MONDE.
+Branche principale, si vous voulez faire des grosses modifs de code créez une branche secondaire puis faites un merge. Ce sera plus clair pour tous le monde.
