@@ -26,23 +26,23 @@ class FieldElement(object):
             return False
     
         else:
-            return (self.num + other.num) % self.prime 
+            return FieldElement((self.num + other.num) % self.prime,self.prime) 
 
     def __sub__(self,other):  
         if other is None:
             return False
         
         elif isinstance(other,int):
-            return (self.num - other) % self.prime
+            return FieldElement((self.num - other) % self.prime,self.prime)
 
         elif self.prime != other.prime:
             return False
 
         else:
-            return (self.num - other.num) % self.prime 
+            return FieldElement((self.num - other.num) % self.prime,self.prime) 
     
     def __neg__(self):
-        return (-self.num) % self.prime
+        return FieldElement((-self.num),self.prime)
 
     def __mul__(self,other): 
         if other is None:
@@ -52,13 +52,13 @@ class FieldElement(object):
             return False
     
         else:
-            return (self.num * other.num) % self.prime 
+            return FieldElement((self.num * other.num) % self.prime,self.prime) 
 
     def __pow__(self,val):
         if val is None:
             return False
         else :
-            return (self.num ** val) % self.prime 
+            return FieldElement((self.num ** val) % self.prime,self.prime) 
         
     def __truediv__(self,other):
         if other is None:
@@ -68,7 +68,7 @@ class FieldElement(object):
             return False
 
         else:
-            return (self.num / other.num) % self.prime
+            return FieldElement((self.num / other.num) % self.prime,self.prime)
 
     def __floordiv__(self,other):
         if other is None:
@@ -78,14 +78,14 @@ class FieldElement(object):
             return False
 
         else:
-            return (self.num // other.num) % self.prime
+            return FieldElement((self.num // other.num) % self.prime,self.prime)
 
     def __rmul__(self,val):
         if val is None:
             return False
 
         else:
-            return (self.num * val) % self.prime
+            return FieldElement((self.num * val) % self.prime,self.prime)
         
     def mod_inverse(self):
 
@@ -100,7 +100,7 @@ class FieldElement(object):
             y = y2 - q * y1
             self.num, b, x2, x1, y2, y1 = b, r, x1, x, y1, y
 
-        return x2 % self.prime
+        return FieldElement(x2 % self.prime,self.prime)
 
     def to_int(self):
         return self.num
@@ -116,10 +116,10 @@ class Point(object):
         self.y = y
         if self.x is None and self.y is None:
             return
-        if self.y**2 != self.x**3 + self.a*self.x + self.b :
-            raise ValueError("Le point ({},{}) n'est pas sur la courbe \n".format(self.x,self.y))
-        else:
-            print("Le point ({},{}) est sur la courbe \n".format(self.x,self.y))
+        #if self.y**2 != self.x**3 + self.a*self.x + self.b :
+        #    raise ValueError("Le point ({},{}) n'est pas sur la courbe \n".format(self.x,self.y))
+        #else:
+        #    print("Le point ({},{}) est sur la courbe \n".format(self.x,self.y))
     
     def __repr__(self):
         if self.x is None:
@@ -133,28 +133,26 @@ class Point(object):
         else:
             return self.x == other.x and self.y == self.y
 
-    #def __ne__(self,):
+    def __ne__(self,other):
+        other.y = -other.y
+        return self + other
  
     def __add__(self,other):
         if other is None:
             return False
         else:
             if self == other:
-                S = (3*self.x + self.a)*(FieldElement(2*self.y,y.prime).mod_inverse())
+                S = (3*self.x + self.a)*((2*self.y).mod_inverse())
                 #S = ((3*self.x + a)*mod_inverse(2*self.y))
-                X = (S**2 - 2*self.x)
-                X = FieldElement(X,x.prime)
-                Y = (FieldElement(S*(self.x-X),x.prime)-self.y)
-                Y = FieldElement(Y,x.prime)
+                X = S**2 - 2*self.x
+                Y = S*(self.x-X)-self.y
                 C = Point(X,Y,self.a,self.b)
                 return C
             else:
-                S = (other.y-self.y)*(FieldElement(other.x-self.x,x.prime).mod_inverse())
+                S = (other.y-self.y)*((other.x-self.x).mod_inverse())
                 #S =((p2.y-self.y)*mod_inverse(other.x-self.x))
-                X = (S**2-self.x.to_int()-other.x.to_int())
-                X = FieldElement(X,x.prime)
-                Y = (FieldElement(S*(self.x-X),x.prime)-self.y)
-                Y = FieldElement(Y,x.prime)
+                X = S**2-self.x-other.x
+                Y = S*(self.x-X)-self.y
                 C = Point(X,Y,self.a,self.b)
                 return C  
 
@@ -172,5 +170,5 @@ x2 = FieldElement(1,5)
 y2 = FieldElement(3,5)
 
 p2=Point(x2,y2,2,1)
-
-print(p1+p2)
+p3=p1+p2
+print(p1+p3)
