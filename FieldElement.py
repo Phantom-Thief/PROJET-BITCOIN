@@ -6,7 +6,7 @@ class FieldElement(object):
         self.num = num
         self.prime = prime
     def __repr__(self):
-        return "FieldElement_{}({})".format(self.prime,self.num)
+        return "{}".format(self.num)
     
     def __eq__(self,other):
         if other is None:
@@ -32,7 +32,7 @@ class FieldElement(object):
         if other is None:
             return False
         
-        elif other.prime is None:
+        elif isinstance(other,int):
             return (self.num - other) % self.prime
 
         elif self.prime != other.prime:
@@ -102,6 +102,9 @@ class FieldElement(object):
 
         return x2 % self.prime
 
+    def to_int(self):
+        return self.num
+
 
  
 
@@ -114,7 +117,9 @@ class Point(object):
         if self.x is None and self.y is None:
             return
         if self.y**2 != self.x**3 + self.a*self.x + self.b :
-            raise ValueError("Le point ({},{}) n'est pas sur la courbe".format(self.x,self.y))
+            raise ValueError("Le point ({},{}) n'est pas sur la courbe \n".format(self.x,self.y))
+        else:
+            print("Le point ({},{}) est sur la courbe \n".format(self.x,self.y))
     
     def __repr__(self):
         if self.x is None:
@@ -138,14 +143,18 @@ class Point(object):
                 S = (3*self.x + self.a)*(FieldElement(2*self.y,y.prime).mod_inverse())
                 #S = ((3*self.x + a)*mod_inverse(2*self.y))
                 X = (S**2 - 2*self.x)
-                Y = (S*(self.x-X)-self.y)
+                X = FieldElement(X,x.prime)
+                Y = (FieldElement(S*(self.x-X),x.prime)-self.y)
+                Y = FieldElement(Y,x.prime)
                 C = Point(X,Y,self.a,self.b)
                 return C
             else:
                 S = (other.y-self.y)*(FieldElement(other.x-self.x,x.prime).mod_inverse())
                 #S =((p2.y-self.y)*mod_inverse(other.x-self.x))
-                X = (S**2-(self.x-other.x))
-                Y = (S*(self.x-X)-self.y)
+                X = (S**2-self.x.to_int()-other.x.to_int())
+                X = FieldElement(X,x.prime)
+                Y = (FieldElement(S*(self.x-X),x.prime)-self.y)
+                Y = FieldElement(Y,x.prime)
                 C = Point(X,Y,self.a,self.b)
                 return C  
 
@@ -157,11 +166,11 @@ class Point(object):
 x = FieldElement(0,5)
 y = FieldElement(1,5)
 
-p=Point(x,y,2,1)
+p1=Point(x,y,2,1)
 
 x2 = FieldElement(1,5)
 y2 = FieldElement(3,5)
 
 p2=Point(x2,y2,2,1)
 
-print(p2+p)
+print(p1+p2)
