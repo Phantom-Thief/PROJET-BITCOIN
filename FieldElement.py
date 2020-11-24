@@ -142,7 +142,7 @@ class Point(object):
             return False
         else:
             if self == other:
-                S = (3*self.x + self.a)*((2*self.y).mod_inverse())
+                S = (3*self.x.to_int() + self.a)*((2*self.y).mod_inverse())
                 #S = ((3*self.x + a)*mod_inverse(2*self.y))
                 X = S**2 - 2*self.x
                 Y = S*(self.x-X)-self.y
