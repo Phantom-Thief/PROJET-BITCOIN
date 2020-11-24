@@ -1,2 +1,2 @@
 # PROJET-BITCOIN
-Branche principale, si vous voulez faire des grosses modifs de code créez une branche secondaire puis faites un merge. Ce sera plus clair pour tous le monde.
+Branche secondaire, On va construire dans cette branche le squelette de notre algorithme de cryptage pour momonnaie avec nos classes de corps finis, de points, les fonctions de résiduts quadratiques et la fonction d'affichage. Une fois fait, cette branche sera merge avec master puis supprimée.
