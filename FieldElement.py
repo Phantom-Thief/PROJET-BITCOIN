@@ -75,7 +75,7 @@ class FieldElement(object):
             raise ValueError(error)
 
         else:
-            return FieldElement(self.num * self.num**(self.prime-2),self.prime)
+            return FieldElement((self.num * other.num**(self.prime-2))%self.prime,self.prime)
 
 
 
@@ -165,13 +165,13 @@ class Point(object):
                 Y = S*(self.x-X)-self.y
                 C = Point(X,Y,self.a,self.b,False)
                 return C  
-            
+
             if self == other and self.y == FieldElement(0,self.x.prime):
                 inf1= FieldElement(0,self.x.prime)
                 inf2 = FieldElement(0,self.x.prime)
                 return Point(inf1,inf2,self.a,self.b,True)
-               
-
+            
+            
     def __rmul__(self,val):
         rmul = Point(None,None,self.a,self.b,False)
         for i in range(val):

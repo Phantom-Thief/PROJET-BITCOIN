@@ -6,8 +6,8 @@ x1= FieldElement(0,5)
 x2= FieldElement(1,5)
 x3= FieldElement(3,5)
 
-v= Point(x1,x2,2,1)
-u= Point(x2,x3,2,1)
+v= Point(x1,x2,2,1,False)
+u= Point(x2,x3,2,1,False)
 
 r1= FieldElement(1,5)
 r3= FieldElement(3,5)
