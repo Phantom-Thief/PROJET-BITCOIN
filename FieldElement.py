@@ -130,15 +130,18 @@ class Point(object):
             return "({}, {})".format(self.x, self.y)
     
     def __eq__(self,other):
-      return self.x == other.x and self.y == other.y and self.a == other.a and self.b == other.b and self.isInfinity == other.isInfinity
+        if other is None:
+            return False
+        else:
+            return self.x == other.x and self.y == other.y and self.a == other.a and self.b == other.b and self.isInfinity == other.isInfinity
     
     def __ne__(self,other):
         return not(self == other)
 
     def __add__(self,other):
-        if other.x is None:
+        if other is None:
             return self
-        if self.x is None:
+        if self is None:
             return other
         if other.isInfinity == True:
             return self 
