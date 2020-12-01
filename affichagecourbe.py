@@ -52,7 +52,7 @@ def domaine(a,b,c):
 
 def graph(a,b,x):
     
-    y = pow(x,3) + a*x + b
+    y = np.sqrt(pow(x,3) + a*x + b)
     plt.ylim([-5,5])
     plt.xlim([-5,5])
     plt.plot(x,y**2)
