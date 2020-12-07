@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 class FieldElement(object):
     def __init__(self,num,prime):
         if num >= prime or num < 0:
@@ -180,28 +183,40 @@ class Point(object):
 
 
 
-x = FieldElement(0,5)
-y = FieldElement(1,5)
+x = FieldElement(170,223)
+y = FieldElement(142,223)
 
-a = FieldElement(2,5)
-b = FieldElement(1,5)
+a = FieldElement(0,223)
+b = FieldElement(7,223)
 
 p1=Point(x,y,a,b)
-p_inf = Point(None,None,a,b)
-print(p_inf)
+#p_inf = Point(None,None,a,b)
+#print(p_inf)
 
 #p1b = p1 + p_inf
 #print(p1b)
 
 
-pmul = 150000*p1
-print(pmul)
+#pmul = 150000*p1
+#print(pmul)
 
-x2 = FieldElement(1,5)
-y2 = FieldElement(3,5)
+#x2 = FieldElement(1,5)
+#y2 = FieldElement(3,5)
 
 
-
+pmulx=np.zeros(223)
+pmuly=np.zeros(223)
+for i in range(1,223):
+    pmul = i*p1
+    if pmul != Point(None,None,a,b):
+        pmulx[i]=pmul.x.to_int()
+        pmuly[i]=pmul.y.to_int()
+        
+plt.title('Nuage de points')   
+plt.xlabel('x')
+plt.ylabel('y')
+plt.scatter(pmulx,pmuly)
+plt.show()
 
 
 #p2=Point(x2,y2,a,b)
