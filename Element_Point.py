@@ -174,7 +174,24 @@ class Point(object):
             coef >>= 1
         return result
 
+class S256Field(FieldElement):
+    def __init__(self,num):
+        self.num = num
+        self.prime = 2**256 - 2**32 - 977
 
+class S256Point(Point):
+    def __init__(self,x,y):
+        self.x = x 
+        self.y = y
+        self.a = S256Field(0)
+        self.b = S256Field(7)
+
+        if self.x is None and self.y is None:
+            return
+        if self.y**2 != self.x**3 + self.a*self.x + self.b   :
+            raise ValueError("Le point ({},{}) n'est pas sur la courbe \n".format(self.x,self.y))
+        else:
+            print("Le point ({},{}) est sur la courbe y^2 = x^3 + {} \n".format(self.x,self.y,self.b))
 
 
 # a = 0 ; b = 7
@@ -182,56 +199,69 @@ class Point(object):
 
 
 
+# x = FieldElement(170,223)
+# y = FieldElement(142,223)
 
-x = FieldElement(170,223)
-y = FieldElement(142,223)
+# a = FieldElement(0,223)
+# b = FieldElement(7,223)
 
-a = FieldElement(0,223)
-b = FieldElement(7,223)
+# p1=Point(x,y,a,b)
+# #p_inf = Point(None,None,a,b)
+# #print(p_inf)
 
-p1=Point(x,y,a,b)
-#p_inf = Point(None,None,a,b)
-#print(p_inf)
-
-#p1b = p1 + p_inf
-#print(p1b)
+# #p1b = p1 + p_inf
+# #print(p1b)
 
 
-#pmul = 150000*p1
-#print(pmul)
+# #pmul = 150000*p1
+# #print(pmul)
 
-#x2 = FieldElement(1,5)
-#y2 = FieldElement(3,5)
+# #x2 = FieldElement(1,5)
+# #y2 = FieldElement(3,5)
 
-irange=np.zeros(223)
-pmulx=np.zeros(223)
-pmuly=np.zeros(223)
-for i in range(1,222):
-    pmul = i*p1
-    if pmul != Point(None,None,a,b):
-        pmulx[i]=pmul.x.to_int()
-        pmuly[i]=pmul.y.to_int()
-        irange[i]=i
+
+
+
+
+def plot_point(p,prime):
+    irange=np.zeros(prime)
+    pmulx=np.zeros(prime)
+    pmuly=np.zeros(prime)
+
+    for i in range(1,prime):
+        pmul = i*p
+        if pmul != Point(None,None,a,b):
+            pmulx[i]=pmul.x.to_int()
+            pmuly[i]=pmul.y.to_int()
+            irange[i]=i
+            
+    plt.title('Nuage de points')   
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.scatter(pmulx,pmuly)
+
+    for i in range(1,prime):
+
+        label = i
+
+        plt.annotate(label, # this is the text
+                    (pmulx[i],pmuly[i]), # this is the point to label
+                    textcoords="offset points", # how to position the text
+                    xytext=(0,10), # distance from text to points (x,y)
+                    ha='center') # horizontal alignment can be left, right or center
         
-plt.title('Nuage de points')   
-plt.xlabel('x')
-plt.ylabel('y')
-plt.scatter(pmulx,pmuly)
-
-
-for i in range(1,43):
-
-    label = i
-
-    plt.annotate(label, # this is the text
-                 (pmulx[i],pmuly[i]), # this is the point to label
-                 textcoords="offset points", # how to position the text
-                 xytext=(0,10), # distance from text to points (x,y)
-                 ha='center') # horizontal alignment can be left, right or center
-    
-plt.show()
+    plt.show()
 
 
 #p2=Point(x2,y2,a,b)
 #p3=p1+p2
 #p4 =p1+p3
+
+
+Gx = S256Field(0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)
+Gy = S256Field(0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
+
+G = S256Point(Gx,Gy)
+
+
+
