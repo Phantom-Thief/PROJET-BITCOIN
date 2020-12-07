@@ -203,19 +203,32 @@ p1=Point(x,y,a,b)
 #x2 = FieldElement(1,5)
 #y2 = FieldElement(3,5)
 
-
+irange=np.zeros(223)
 pmulx=np.zeros(223)
 pmuly=np.zeros(223)
-for i in range(1,223):
+for i in range(1,222):
     pmul = i*p1
     if pmul != Point(None,None,a,b):
         pmulx[i]=pmul.x.to_int()
         pmuly[i]=pmul.y.to_int()
+        irange[i]=i
         
 plt.title('Nuage de points')   
 plt.xlabel('x')
 plt.ylabel('y')
 plt.scatter(pmulx,pmuly)
+
+
+for i in range(1,43):
+
+    label = i
+
+    plt.annotate(label, # this is the text
+                 (pmulx[i],pmuly[i]), # this is the point to label
+                 textcoords="offset points", # how to position the text
+                 xytext=(0,10), # distance from text to points (x,y)
+                 ha='center') # horizontal alignment can be left, right or center
+    
 plt.show()
 
 
