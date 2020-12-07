@@ -1,2 +1,2 @@
 # PROJET-BITCOIN
-Branche secondaire, On va construire dans cette branche le squelette de notre algorithme de cryptage pour momonnaie avec nos classes de corps finis, de points, les fonctions de résiduts quadratiques et la fonction d'affichage. Une fois fait, cette branche sera merge avec master puis supprimée.
+Branche principale, chaque modification importante sera faite dans une branche secondaire avant de merge.
