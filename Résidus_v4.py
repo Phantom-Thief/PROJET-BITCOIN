@@ -43,4 +43,4 @@ def main(a,mod):
     print("\t  roots : [%d ; %d]" % (r, mod - r))
 
 if __name__ == '__main__':
-    main(33, 103)                                           #A modifier
+    main(52, 103)                                           #A modifier
