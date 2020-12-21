@@ -193,6 +193,19 @@ class S256Point(Point):
         else:
             print("Le point ({},{}) est sur la courbe y^2 = x^3 + {} \n".format(self.x,self.y,self.b))
 
+    def __repr__(self):
+        if self.x is None:
+            return "S256Point(Infini)"
+        else:
+            return "S256Point({},{})".format(self.x,self.y)
+    
+    def __rmul__(self,coefficient):
+        N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+        coef = coefficient %N
+        return super().__rmul__(coef)
+
+
+
 
 # a = 0 ; b = 7
 #prime = 2**256 -2**32 -977
@@ -230,7 +243,7 @@ def plot_point(p,prime):
 
     for i in range(1,prime):
         pmul = i*p
-        if pmul != Point(None,None,a,b):
+        if pmul != Point(None,None,p.a,p.b):
             pmulx[i]=pmul.x.to_int()
             pmuly[i]=pmul.y.to_int()
             irange[i]=i
