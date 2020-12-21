@@ -204,6 +204,8 @@ class S256Point(Point):
         coef = coefficient %N
         return super().__rmul__(coef)
 
+    def SEC(self):
+        return "0x04" + str(self.x.num.to_bytes(32,byteorder='big')) + str(self.y.num.to_bytes(32,byteorder='big'))
 
 
 
@@ -276,5 +278,5 @@ Gy = S256Field(0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b
 
 G = S256Point(Gx,Gy)
 
-
+print(G.SEC())
 
