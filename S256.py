@@ -180,6 +180,12 @@ class S256Field(FieldElement):
         self.num = num
         self.prime = 2**256 - 2**32 - 977
 
+class Signature(object):
+    def __inst__ (self,r,s):
+        self.r = r
+        self.s= s
+
+
 class S256Point(Point):
     def __init__(self,x,y):
         self.x = x 
@@ -209,7 +215,17 @@ class S256Point(Point):
     def SEC(self):
         tab = np.array([b'\x04',self.x.num.to_bytes(32,'big'),self.y.num.to_bytes(32,'big')])
         return tab
-    
+    def verify(self,z,sig):
+        px = 0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574
+        py = 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4
+        point = S256Point(px, py)
+
+        s_inv = pow(s, N-2, N)
+        u=z*s_inv%N
+        v=r*s_inv%N
+        print((u * G + v * point).x.num == r)
+
+
 
 # a = 0 ; b = 7
 #prime = 2**256 -2**32 -977
@@ -259,6 +275,10 @@ Gx = S256Field(0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f8179
 Gy = S256Field(0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 
 G = S256Point(Gx,Gy)
+
+r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
+s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+sig = Signature(r,s)
 
 P1 = 5000*G
 P1_SEC = P1.SEC()
