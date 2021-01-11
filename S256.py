@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class FieldElement(object):
     def __init__(self,num,prime):
         if num >= prime or num < 0:
@@ -186,12 +187,12 @@ class S256Point(Point):
         self.a = S256Field(0)
         self.b = S256Field(7)
 
-        """ if self.x is None and self.y is None:
+        if self.x is None and self.y is None:
             return
         if self.y**2 != self.x**3 + self.a*self.x + self.b   :
             raise ValueError("Le point ({},{}) n'est pas sur la courbe \n".format(self.x,self.y))
         else:
-            print("Le point ({},{}) est sur la courbe y^2 = x^3 + {} \n".format(self.x,self.y,self.b)) """
+            print("Le point ({},{}) est sur la courbe y^2 = x^3 + {} \n".format(self.x,self.y,self.b))
 
     def __repr__(self):
         if self.x is None:
@@ -206,37 +207,16 @@ class S256Point(Point):
         return S256Point(P.x,P.y)
 
     def SEC(self):
-        return "0x04" + str(self.x.num.to_bytes(32,byteorder='big')) + str(self.y.num.to_bytes(32,byteorder='big'))
+        tab = np.array([b'\x04',self.x.num.to_bytes(32,'big'),self.y.num.to_bytes(32,'big')])
+        return tab
     
-
-def Parse(SEC):
-    if SEC[0:4] == "0x04":
-        SEC = SEC[4:]
-        splt = SEC.split("b'")
-        x_str =  splt[1]
-        x_str = x_str[:-1]
-
-        y_str =  splt[2]
-        y_str = y_str[:-1]
-
-        x_encode = x_str.encode(encoding='ascii',errors='strict')
-        y_encode = y_str.encode(encoding='ascii',errors='strict')
-
-        x = int.from_bytes(x_encode,byteorder='big')
-        y = int.from_bytes(y_encode,byteorder='big')
-        #Donne pas les bons nombres alors qu'on a la bonne suite d'octet (peut être utilisé une autre méthode ?)
-        print(x)
-        print("\n")
-        print(y)
-
-    else:
-        print("Format non accepté par le Parseur.")
 
 # a = 0 ; b = 7
 #prime = 2**256 -2**32 -977
-
-
-
+def Parse(SEC):
+    x = int.from_bytes(SEC[1],byteorder='big')
+    y = int.from_bytes(SEC[2],byteorder='big')
+    return S256Point(S256Field(x),S256Field(y))
 
 
 def plot_point(p,prime):
