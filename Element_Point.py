@@ -207,6 +207,21 @@ class S256Point(Point):
     def SEC(self):
         return "0x04" + str(self.x.num.to_bytes(32,byteorder='big')) + str(self.y.num.to_bytes(32,byteorder='big'))
 
+    
+    #Le test de la fonction ne passe pas le if (a cause des valeurs ou a cause d'un bug?)
+    def sqrt(self):
+        tab = []
+        mod = self.x.prime
+        N=int((mod-1)/2)
+        M=int((mod+1)/4)
+        bonjour = S256Field(1)
+        if(self.x**(N)!=bonjour or mod%4!=3):
+            return
+        else:
+            tab.append(pow(self.x,M,mod))
+            tab.append(mod-pow(self.x,M,mod))
+
+        return tab
 
 
 # a = 0 ; b = 7
@@ -277,6 +292,8 @@ Gx = S256Field(0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f8179
 Gy = S256Field(0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 
 G = S256Point(Gx,Gy)
+
+print(G.sqrt())
 
 print(G.SEC())
 
