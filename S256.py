@@ -184,6 +184,8 @@ class Signature(object):
     def __inst__ (self,r,s):
         self.r = r
         self.s= s
+    def __repr__(self):
+        return 'Signature({:x},{:x})'.format(self.r, self.s)
 
 
 class S256Point(Point):
@@ -216,14 +218,11 @@ class S256Point(Point):
         tab = np.array([b'\x04',self.x.num.to_bytes(32,'big'),self.y.num.to_bytes(32,'big')])
         return tab
     def verify(self,z,sig):
-        px = 0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574
-        py = 0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4
-        point = S256Point(px, py)
-
-        s_inv = pow(s, N-2, N)
+    
+        s_inv = pow(sig.s, N-2, N)
         u=z*s_inv%N
-        v=r*s_inv%N
-        print((u * G + v * point).x.num == r)
+        v=sig.r*s_inv%N
+        print((u * G + v * self).x.num == sig.r)
 
 
 
@@ -275,17 +274,25 @@ Gx = S256Field(0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f8179
 Gy = S256Field(0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 
 G = S256Point(Gx,Gy)
-
+N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
 s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
+z = 0xbc62d4b80d9e36da29c16c5d4d9f11731f36052c72401a76c23c0fb5a9b74423
 sig = Signature(r,s)
 
-P1 = 5000*G
-P1_SEC = P1.SEC()
+px = S256Field(0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574)
+py = S256Field(0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4)
+point = S256Point(px, py)
+#P1 = 5000*G
+#P1_SEC = P1.SEC()
+point.verify(z,sig)
 
-print(P1_SEC)
 
-Parse(P1_SEC)
+#print(P1_SEC)
+
+
+
+#Parse(P1_SEC)
 
 #print("nouveau test")
 
