@@ -181,7 +181,7 @@ class S256Field(FieldElement):
         self.prime = 2**256 - 2**32 - 977
 
 class Signature(object):
-    def __inst__ (self,r,s):
+    def __init__ (self,r,s):
         self.r = r
         self.s= s
     def __repr__(self):
@@ -218,11 +218,10 @@ class S256Point(Point):
         tab = np.array([b'\x04',self.x.num.to_bytes(32,'big'),self.y.num.to_bytes(32,'big')])
         return tab
     def verify(self,z,sig):
-    
         s_inv = pow(sig.s, N-2, N)
         u=z*s_inv%N
         v=sig.r*s_inv%N
-        print((u * G + v * self).x.num == sig.r)
+        return (u * G + v * self).x.num == sig.r
 
 
 
@@ -285,7 +284,7 @@ py = S256Field(0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c
 point = S256Point(px, py)
 #P1 = 5000*G
 #P1_SEC = P1.SEC()
-point.verify(z,sig)
+print(point.verify(z,sig))
 
 
 #print(P1_SEC)
