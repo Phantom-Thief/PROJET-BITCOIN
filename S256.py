@@ -217,6 +217,19 @@ class S256Point(Point):
     def SEC(self):
         tab = np.array([b'\x04',self.x.num.to_bytes(32,'big'),self.y.num.to_bytes(32,'big')])
         return tab
+    
+    def SECC(self):
+        if(self.y.num%2==0):
+            pair=True
+        else:
+            pair=False
+        if(pair==True):
+            tab = np.array([b'\x04',b'\02',self.x.num.to_bytes(32,'big')])
+        else:
+            tab = np.array([b'\x04',b'\03',self.x.num.to_bytes(32,'big')])    
+        return tab
+         
+
     def verify(self,z,sig):
         s_inv = pow(sig.s, N-2, N)
         u=z*s_inv%N
@@ -299,6 +312,9 @@ print(point.verify(z,sig))
 #print(P2.SEC())
 
 
-""" Ptest = S256Point(S256Field(50),S256Field(150))
+# Ptest = S256Point(S256Field(50),S256Field(150))
+Ptest= G
 PtestSEC = Ptest.SEC()
-Parse(PtestSEC) """
+PtestSECC = Ptest.SECC()
+print(PtestSECC)
+# Parse(PtestSEC)
