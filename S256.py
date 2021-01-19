@@ -238,9 +238,9 @@ class S256Point(Point):
         else:
             pair=False
         if(pair==True):
-            tab = np.array([b'\x04',b'\02',self.x.num.to_bytes(32,'big')])
+            tab = np.array([b'\02',self.x.num.to_bytes(32,'big')])
         else:
-            tab = np.array([b'\x04',b'\03',self.x.num.to_bytes(32,'big')])    
+            tab = np.array([b'\03',self.x.num.to_bytes(32,'big')])    
         return tab
          
 
