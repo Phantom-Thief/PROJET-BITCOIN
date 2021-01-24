@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from helper import hash256
+from random import randint
 
 
 class FieldElement(object):
@@ -191,7 +193,7 @@ class PrivateKey:
     def sign(self, z):
         k = randint(0, N)
         r = (k * G).x.num
-        s = (z + r*self.secret)/k
+        s = (z + r*self.secret)*pow(k, N-2, N)
         return Signature(r,s)
 
 class Signature(object):
@@ -308,15 +310,24 @@ sig = Signature(r,s)
 
 px = S256Field(0x04519fac3d910ca7e7138f7013706f619fa8f033e6ec6e09370ea38cee6a7574)
 py = S256Field(0x82b51eab8c27c66e26c858a079bcdf4f1ada34cec420cafc7eac1a42216fb6c4)
-point = S256Point(px, py)
+#point = S256Point(px, py)
 #P1 = 5000*G
 #P1_SEC = P1.SEC()
-print(point.verify(z,sig))
-
+#print(point.verify(z,sig))
 
 #print(P1_SEC)
 
+#clé priv
+e = int.from_bytes(hash256(b'mon secret'), 'big')
+privk= PrivateKey(e)
 
+#signature créée
+signature= privk.sign(z)
+print(signature)
+
+#Vérification de la signature
+point = privk.point
+print(point.verify(z,signature))
 
 #Parse(P1_SEC)
 
