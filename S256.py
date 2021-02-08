@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from helper import hash256
+from helper import hash256, hash160, encode_base58_checksum
 from random import randint
+from io import BytesIO
 
 
 class FieldElement(object):
@@ -193,8 +194,25 @@ class PrivateKey:
     def sign(self, z):
         k = randint(0, N)
         r = (k * G).x.num
-        s = (z + r*self.secret)*pow(k, N-2, N)
+        k_inv = pow(k, N-2, N)
+        s = (z + r*self.secret)*k_inv%N
         return Signature(r,s)
+
+    def wif(self, compressed=True, testnet=False):
+        #Convertir la clé privée int -> 32-bytes big endian
+        secret_bytes = self.secret.to_bytes(32, 'big')
+        # on préfixe par b'\xef' sur testnet et par b'\x80' sur mainnet
+        if testnet:
+            prefix = b'\xef'
+        else:
+            prefix = b'\x80'
+        #On ajoute b'\x01' si option compressed
+        if compressed:
+            suffix = b'\x01'
+        else:
+            suffix = b''
+        #On transforme le tout par la fonction de helper.py encode _base58_checksum
+        return encode_base58_checksum(prefix + secret_bytes + suffix)
 
 class Signature(object):
     def __init__ (self,r,s):
@@ -202,6 +220,47 @@ class Signature(object):
         self.s= s
     def __repr__(self):
         return 'Signature({:x},{:x})'.format(self.r, self.s)
+    def der(self):
+        rbin = self.r.to_bytes(32, byteorder='big')
+        #on enlève tous les bits nuls au début
+        rbin= rbin.lstrip('b\x00')
+        #si rbin a un premier bit > 80, on ajoute \x00
+        if rbin[0] & 0x80:
+            rbin = 'b\x00'+rbin
+        result = bytes([2, len(rbin)]) +rbin 
+
+        sbin = self.s.to_bytes(32, byteorder='big')
+        #on enlève tous les bits nuls au début
+        sbin= sbin.lstrip(b'\x00')
+        #si rbin a un premier bit > 80, on ajoute \x00
+        if sbin[0] & 0x80:
+            sbin = b'\x00'+sbin
+        result = bytes([2, len(sbin)]) +sbin
+
+        return bytes([0x30,len(result)]) + result
+
+    @classmethod
+    def parse(cls, signature_bin):
+        s = BytesIO(signature_bin)
+        compound = s.read(1)[0]
+        if compound != 0x30:
+            raise SyntaxError("Bad Signature")
+        length = s.read(1)[0]
+        if length + 2 != len(signature_bin):
+            raise SyntaxError("Bad Signature Length")
+        marker = s.read(1)[0]
+        if marker != 0x02:
+            raise SyntaxError("Bad Signature")
+        rlength = s.read(1)[0]
+        r = int.from_bytes(s.read(rlength), 'big')
+        marker = s.read(1)[0]
+        if marker != 0x02:
+            raise SyntaxError("Bad Signature")
+        slength = s.read(1)[0]
+        s = int.from_bytes(s.read(slength), 'big')
+        if len(signature_bin) != 6 + rlength + slength:
+            raise SyntaxError("Signature too long")
+        return cls(r, s)
 
 
 class S256Point(Point):
@@ -302,6 +361,9 @@ Gx = S256Field(0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f8179
 Gy = S256Field(0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 
 G = S256Point(Gx,Gy)
+
+
+#Test signature
 N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 r = 0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6
 s = 0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec
@@ -322,12 +384,12 @@ e = int.from_bytes(hash256(b'mon secret'), 'big')
 privk= PrivateKey(e)
 
 #signature créée
-signature= privk.sign(z)
-print(signature)
+#signature= privk.sign(z)
+#print(signature)
 
 #Vérification de la signature
-point = privk.point
-print(point.verify(z,signature))
+#point = privk.point
+#print(point.verify(z,signature))
 
 #Parse(P1_SEC)
 
@@ -338,8 +400,8 @@ print(point.verify(z,signature))
 
 
 # Ptest = S256Point(S256Field(50),S256Field(150))
-Ptest= G
-PtestSEC = Ptest.SEC()
-PtestSECC = Ptest.SECC()
-print(PtestSECC)
+#Ptest= G
+#PtestSEC = Ptest.SEC()
+#PtestSECC = Ptest.SECC()
+#print(PtestSECC)
 # Parse(PtestSEC)
