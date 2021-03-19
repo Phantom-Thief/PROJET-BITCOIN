@@ -343,10 +343,10 @@ class Tx:
     #def parse(cls, serialization):
     #    version = serialization[0:4]
 
-    #@classmethod
-    #def parse(cls, stream):
-    #   serialized_version = stream.read(4)
-
+    @classmethod
+    def parse(cls, stream):
+       serialized_version = stream.read(4)
+    
     def serialize(self):
         result = int_to_little_endian(self.version, 4)
         result += encode_varint(len(self.tx_ins))
